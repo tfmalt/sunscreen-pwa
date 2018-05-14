@@ -5,6 +5,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import AppBar from 'material-ui/AppBar';
 import './App.css';
 
+document.body.style = 'background: #00bcd4;';
 
 const SunscreenApp = () => (
   <div> 

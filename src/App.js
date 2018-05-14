@@ -8,7 +8,7 @@ import './App.css';
 // document.body.style = 'background: #00bcd4;';
 
 const SunscreenApp = () => (
-  <div> 
+  <div style={{backgroundColor: "white"}}> 
     <AppBar 
       title="SD60 Sunscreen"
       iconClassNameRight="muidocs-icon-navigation-expand-more"

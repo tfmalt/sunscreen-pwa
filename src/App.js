@@ -59,7 +59,7 @@ class SunscreenApp extends Component {
           }}>
             <Slider 
               style={{
-                height: "60vh"
+                height: "500px"
               }} 
              axis="y" 
              defaultValue={this.state.sunscreenValue} 
@@ -85,8 +85,8 @@ class SunscreenApp extends Component {
 // More on Colors: http://www.material-ui.com/#/customization/colors
 const muiTheme = getMuiTheme({
   slider: {
-    handleSize: 50,
-    handleSizeActive: 80
+    handleSize: 48,
+    handleSizeActive: 64
   }
 });
 

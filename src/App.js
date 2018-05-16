@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-// import ReactDOM from 'react-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Slider from 'material-ui/Slider';
 import AppBar from 'material-ui/AppBar';
 import './App.css';
-
-// document.body.style = 'background: #00bcd4;';
 
 class SunscreenApp extends Component {
   constructor(props) {
@@ -55,13 +53,13 @@ class SunscreenApp extends Component {
             display: "flex",
             flexDirection: "row",
             justifyContent: "center",
-
+            marginTop: "3vh",
             alignSelf: "center",
             textAlign: "center"
           }}>
             <Slider 
               style={{
-                height: "90%"
+                height: "60vh"
               }} 
              axis="y" 
              defaultValue={this.state.sunscreenValue} 
@@ -82,10 +80,20 @@ class SunscreenApp extends Component {
   }
 }
 
+// This replaces the textColor value on the palette
+// and then update the keys for each component that depends on it.
+// More on Colors: http://www.material-ui.com/#/customization/colors
+const muiTheme = getMuiTheme({
+  slider: {
+    handleSize: 50,
+    handleSizeActive: 80
+  }
+});
+
 class App extends Component {
   render() {
     return (
-      <MuiThemeProvider>
+      <MuiThemeProvider muiTheme={muiTheme}>
         <SunscreenApp />
       </MuiThemeProvider>
     );

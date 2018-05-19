@@ -38,7 +38,6 @@ class SunAppBar extends Component {
           <Typography variant="title" color="inherit" className={this.classes.flex}>
               {this.props.title}
           </Typography>
-          <Button color="inherit">Login</Button>
         </Toolbar>
       </AppBar>
     </div>

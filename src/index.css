@@ -10,4 +10,9 @@ body {
 
 div#root {
   background-color: wheat;
+  height: 100%;
+}
+
+div#root > div {
+  height: 100%;
 }

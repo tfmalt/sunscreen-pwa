@@ -1,7 +1,11 @@
-import React, { Component } from 'react';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import SunscreenApp from './components/SunscreenApp';
+import React, { Component } from 'react'
+import { BrowserRouter, Route, Redirect } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/core/styles'
 import './App.css';
+import SunscreenApp from './components/SunscreenApp'
+import Authorize from './components/Authorize'
 
 const sunTheme = createMuiTheme({
   palette: {
@@ -14,14 +18,54 @@ const sunTheme = createMuiTheme({
   }
 });
 
-class App extends Component {
+const styles = theme => ({
+  textField: {
+    marginLeft: sunTheme.spacing.unit,
+    marginRight: sunTheme.spacing.unit,
+    width: 200,
+  },
+})
+
+const storage = window.localStorage;
+
+class Home extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      apikey: storage.getItem("apikey")
+    }
+    console.log(this.state);
+  }
+
   render() {
+    if (this.state.apikey === null) {
+      return <Redirect to="/auth" />
+    }
     return (
-      <MuiThemeProvider theme={sunTheme}>
         <SunscreenApp theme={sunTheme} />
-      </MuiThemeProvider>
     );
   }
 }
 
-export default App;
+class App extends Component {
+  render() {
+    return (
+      <MuiThemeProvider theme={sunTheme}>
+      <BrowserRouter>
+        <div>
+          <Route exact path="/" component={Home} />
+          <Route path="/auth" component={Authorize} />
+        </div>
+      </BrowserRouter>
+      </MuiThemeProvider>
+    )
+  }
+
+}
+
+App.propTypes = {
+  classes: PropTypes.object.isRequired
+}
+
+export default withStyles(styles)(App);

@@ -1,11 +1,13 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { withStyles } from '@material-ui/core/styles'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+import IconButton from '@material-ui/core/IconButton'
+import Snackbar from '@material-ui/core/Snackbar'
+import { Offline } from 'react-detect-offline'
+import MenuIcon from '@material-ui/icons/Menu'
 
 const styles = {
   root: {
@@ -24,6 +26,9 @@ class SunAppBar extends Component {
   constructor(props) {
     super(props);
     this.classes = props.classes;
+    this.state = {
+      networkInfoOpen: true
+    }
   };
 
   render() {
@@ -39,6 +44,20 @@ class SunAppBar extends Component {
           </Typography>
         </Toolbar>
       </AppBar>
+      <Offline>
+        <Snackbar
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          open={this.state.networkInfoOpen}
+          ContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={
+            <span id="message-id">
+              No Internet connection. The app will not work
+            </span>
+          }
+        />
+      </Offline>
     </div>
   );
 };

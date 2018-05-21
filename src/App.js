@@ -32,7 +32,7 @@ class Home extends Component {
   constructor(props) {
     super(props)
 
-    if (props.location.hasOwnProperty("state")) {
+    if (typeof props.location.state !== 'undefined') {
       this.handleLocationState(props.location.state)
       this.state = props.location.state
     }
@@ -45,7 +45,7 @@ class Home extends Component {
       }
     }
 
-    console.log(this.state);
+    console.log("state", this.state);
   }
 
   handleLocationState = params => {

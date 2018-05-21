@@ -21,7 +21,21 @@ import validator from 'validator'
 
 const styles = theme => ({
   button: {},
-  textField: {}
+  textField: {},
+  formPage: {
+    position: "relative",
+    top: "48px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    margin: "12px 8vw",
+    height: "76vh",
+  },
+  root: {
+    height: "100vh", 
+    width: "100vw", 
+    backgroundColor: "white", 
+  }
 });
 
 class Authorize extends Component {
@@ -39,6 +53,8 @@ class Authorize extends Component {
       urlHelperText: "",
       authorizeOk: false
     }
+
+    console.log("classes", props.classes)
   }
 
   handleChange = name => event => {
@@ -136,15 +152,9 @@ class Authorize extends Component {
     }
 
     return ( 
-      <div style={{height: "100vh", backgroundColor: "white", position: "fixed"}}>
-        <SunAppBar title = "SD60 Sunscreen" />
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          margin: "0 8vw",
-          height: "80vh",
-        }}>
+      <div className={this.classes.root}>
+        <SunAppBar title="SD60 Sunscreen" auth={this.state} location={this.props.location}/>
+        <div className={this.classes.formPage}>
           <Typography variant="subheading" color="inherit">
             Please enter the SD60 URI and password to authorize:
           </Typography> 

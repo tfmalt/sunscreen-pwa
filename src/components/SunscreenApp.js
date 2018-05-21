@@ -1,12 +1,18 @@
 import 'rc-slider/assets/index.css'
 import React, { Component } from 'react'
 import SunAppBar from './SunAppBar'
-import { withStyles } from '@material-ui/core'
+import { withTheme, withStyles } from '@material-ui/core/styles'
 import Slider from 'rc-slider';
 
 const TooltipSlider = Slider.createSliderWithTooltip(Slider);
 
-const styles = {}
+const styles = theme => ({
+  root: {
+    width: "100vw",
+    height: "100vh"
+  }
+});
+
 const marks = {
     10: "",
     25: "",
@@ -74,8 +80,8 @@ class SunscreenApp extends Component {
 
   render() {
     return (
-      <div>
-      <SunAppBar title="SD60 Sunscreen" />
+      <div className={this.props.classes.root}>
+      <SunAppBar auth={this.props.auth} title="SD60 Sunscreen" location={this.props.location} />
       <div style={{
           display: "flex",
           flexDirection: "column",
@@ -90,28 +96,27 @@ class SunscreenApp extends Component {
           <span style={{
               display: "block",
               fontSize: "8vh",
-              color: this.palette.primary.main
+              color: this.props.theme.palette.primary.main
           }}>{this.state.sunscreenValue}</span>
         </div>
         <div id="slider-flex-rows">
-            <div id="slider-wrapper" style={this.sliderStyle}>
-                <TooltipSlider vertical marks={marks} included={true} min={0} max={100}
-                    defaultValue={this.props.sunscreenValue}
-                    trackStyle={this.trackStyle}
-                    railStyle={this.railStyle}
-                    handleStyle={this.handleStyle} 
-                    dotStyle={this.dotStyle}
-                    activeDotStyle={this.activeDotStyle}
-                    tipProps={{placement: "right"}}
-                    onChange={this.onSliderChange.bind(this)}
-                />
-            </div>
+          <div id="slider-wrapper" style={this.sliderStyle}>
+            <TooltipSlider vertical marks={marks} included={true} min={0} max={100}
+              defaultValue={this.props.sunscreenValue}
+              trackStyle={this.trackStyle}
+              railStyle={this.railStyle}
+              handleStyle={this.handleStyle} 
+              dotStyle={this.dotStyle}
+              activeDotStyle={this.activeDotStyle}
+              tipProps={{placement: "right"}}
+              onChange={this.onSliderChange.bind(this)}
+            />
+          </div>
         </div>
-        <div id="bottom-footer"></div>
-        </div>
+      </div>
       </div>
     )
   }
 }
 
-export default withStyles(styles)(SunscreenApp);
+export default withTheme()(withStyles(styles)(SunscreenApp))

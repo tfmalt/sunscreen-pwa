@@ -24,11 +24,6 @@ div#slider-flex-rows {
   margin-top: 3vh;
 }
 
-div#bottom-footer {
-  height: 20vh;
-  flex: 1 0 auto
-}
-
 @keyframes App-logo-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

@@ -1,5 +1,6 @@
-import { withStyles } from "@material-ui/core"
 import React, { Component } from 'react'
+import { Redirect } from 'react-router-dom'
+import { withStyles } from "@material-ui/core"
 import PropTypes from 'prop-types'
 import FormControl from '@material-ui/core/FormControl'
 import InputLabel from '@material-ui/core/InputLabel'
@@ -36,12 +37,11 @@ class Authorize extends Component {
       passwordHelperText: "",
       isURLError: false,
       urlHelperText: "",
-      networkInfoOpen: true
+      authorizeOk: false
     }
   }
 
   handleChange = name => event => {
-    console.log("handle change", name, event.target.value)
     this.setState({
       [name]: event.target.value 
     })
@@ -98,23 +98,30 @@ class Authorize extends Component {
     }
   }
 
-  handleButtonClick = name => event => {
+  handleAuthorize = name => event => {
     console.log("button:", name, this.state)
     if (this.validateURL(this.state.url) === false) {
       return false
     }
 
-    const url = this.state.url.replace(/\/$/, "")
-    console.log("url:", url)
-    fetch(`${url}/api/`, {
-      method: "GET",
-      mode: "no-cors",
+    const url = `${this.state.url.replace(/\/$/, "")}/api/`
+    console.log("url:", url, "password:", this.state.password)
+    return fetch(url, {
       headers: {
-        'X-HA-Access': this.state.password,
-        'Content-Type': "application/json"
+        'x-ha-access': this.state.password
+      },
+    }).then((res) => {
+      console.log("Got result", res.status)
+      if (res.status === 200) {
+        this.setState({
+          authorizeOk: true
+        })
+        return
       }
-    }).then(res => {
-      console.log("Got result", res)
+      if (res.status === 401) {
+        this.handleIncorrectPassword()
+        return
+      }
     }).catch(error => {
       console.log("Got error:", error)
       this.handleCouldNotConnectURL()
@@ -124,15 +131,19 @@ class Authorize extends Component {
   handleSubmit = event => event.preventDefault()
 
   render() {
+    if (this.state.authorizeOk) {
+      return (<Redirect to={{pathname: '/', state: this.state}} />)
+    }
+
     return ( 
-      <div style={{height: "100%", backgroundColor: "white"}}>
+      <div style={{height: "100vh", backgroundColor: "white"}}>
         <SunAppBar title = "SD60 Sunscreen" />
         <div style={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          margin: "4vh 8vw",
-          height: "80%",
+          margin: "0 8vw",
+          height: "80vh",
         }}>
           <Typography variant="subheading" color="inherit">
             Please enter the SD60 URI and password to authorize:
@@ -181,7 +192,7 @@ class Authorize extends Component {
           <Button variant="raised"
             className={this.classes.button}
             color="primary"
-            onClick={this.handleButtonClick('authorize')}
+            onClick={this.handleAuthorize('authorize')}
           >
             Authorize
           </Button>

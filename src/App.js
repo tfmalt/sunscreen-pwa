@@ -32,10 +32,30 @@ class Home extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      apikey: storage.getItem("apikey")
+    if (props.location.hasOwnProperty("state")) {
+      this.handleLocationState(props.location.state)
+      this.state = props.location.state
     }
+    else {
+      this.state = {
+        apikey: storage.getItem("apikey"),
+        url: storage.getItem('url'),
+        authorizeOk: storage.getItem('authorizeOk'),
+        rememberCredentials: storage.getItem('rememberCredentials'),
+      }
+    }
+
     console.log(this.state);
+  }
+
+  handleLocationState = params => {
+      console.log("got params:", params)
+      if (params.rememberCredentials === true) {
+        storage.setItem('rememberCredentials', true)
+        storage.setItem('apikey', params.password)
+        storage.setItem('url', params.url)
+        storage.setItem('authorizeOk', params.authorizeOk)
+      }
   }
 
   render() {
@@ -52,16 +72,15 @@ class App extends Component {
   render() {
     return (
       <MuiThemeProvider theme={sunTheme}>
-      <BrowserRouter>
-        <div>
-          <Route exact path="/" component={Home} />
-          <Route path="/auth" component={Authorize} />
-        </div>
-      </BrowserRouter>
+        <BrowserRouter>
+          <div>
+            <Route exact path="/" component={Home} />
+            <Route path="/auth" component={Authorize} />
+          </div>
+        </BrowserRouter>
       </MuiThemeProvider>
     )
   }
-
 }
 
 App.propTypes = {

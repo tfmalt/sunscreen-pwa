@@ -29,14 +29,18 @@ class SunAppBar extends Component {
     this.state = {
       networkInfoOpen: true
     }
-  };
+  }
+
+  toggleDrawer = () => () => {
+    console.log("toggle drawer")
+  }
 
   render() {
   return (
     <div className={this.classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton className={this.classes.menuButton} color="inherit" aria-label="Menu">
+          <IconButton onClick={this.toggleDrawer()} className={this.classes.menuButton} color="inherit" aria-label="Menu">
             <MenuIcon />
           </IconButton>
           <Typography variant="title" color="inherit" className={this.classes.flex}>

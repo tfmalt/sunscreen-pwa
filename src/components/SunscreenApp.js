@@ -2,7 +2,15 @@ import 'rc-slider/assets/index.css'
 import React, { Component } from 'react'
 import SunAppBar from './SunAppBar'
 import { withTheme, withStyles } from '@material-ui/core/styles'
-import Slider from 'rc-slider';
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+import CardHeader from '@material-ui/core/CardHeader'
+import IconButton from '@material-ui/core/IconButton'
+import MoreVertIcon from '@material-ui/icons/MoreVert'
+import Avatar from '@material-ui/core/Avatar'
+import grey from '@material-ui/core/colors/grey';
+import Slider from 'rc-slider'
+import SwipeableViews from 'react-swipeable-views'
 
 const TooltipSlider = Slider.createSliderWithTooltip(Slider);
 
@@ -10,6 +18,22 @@ const styles = theme => ({
   root: {
     width: "100vw",
     height: "100vh"
+  },
+  deviceBox: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "80vh",
+    width: "88vw",
+    margin: "14vh 6vw",
+  },
+  containmentUnit: {
+    backgroundColor: grey[100],
+  },
+  cardHeader: {
+    backgroundColor: theme.palette.primary.dark,
+    width: "80vw"
   }
 });
 
@@ -31,7 +55,7 @@ class SunscreenApp extends Component {
 
     this.sliderStyle = {
         flex: "0 1 auto",
-        height: "60vh",
+        height: "49vh",
         width: "18px",
         paddingTop: "12px",
         paddingBottom: "12px"
@@ -79,41 +103,68 @@ class SunscreenApp extends Component {
   };
 
   render() {
+    const { classes } = this.props
+
     return (
-      <div className={this.props.classes.root}>
-      <SunAppBar auth={this.props.auth} title="SD60 Sunscreen" location={this.props.location} />
-      <div style={{
-          display: "flex",
-          flexDirection: "column",
-          backgroundColor: "white",
-          height: "100%",
-          justifyContent: "center"
-      }}>
-        <div style={{
-            height: "10vh",
-            textAlign: "center",
-          }}>
-          <span style={{
-              display: "block",
-              fontSize: "8vh",
-              color: this.props.theme.palette.primary.main
-          }}>{this.state.sunscreenValue}</span>
+      <div className={classes.root}>
+        <SunAppBar 
+          auth={this.props.auth} 
+          title="SD60 Sunscreen" 
+          location={this.props.location} 
+        />
+        <div id="containment-unit" className={classes.containmentUnit}>
+          <SwipeableViews>
+            <Card raised className={classes.deviceBox}>
+            <CardHeader className={classes.cardHeader}
+            action={
+              <IconButton>
+                <MoreVertIcon />
+              </IconButton>
+            }
+            title="Sunscreen Downstairs"
+            subheader="September 14, 2016"
+          />
+              <CardContent>
+              <div style={{
+                height: "10vh",
+                textAlign: "center",
+              }}>
+                <span style={{
+                  display: "block",
+                  fontSize: "8vh",
+                  color: this.props.theme.palette.primary.main
+                }}>
+                  {this.state.sunscreenValue}
+                </span>
+              </div>
+              <div id="slider-flex-rows">
+                <div id="slider-wrapper" style={this.sliderStyle}>
+                  <TooltipSlider vertical marks={marks} included={true} min={0} max={100}
+                    defaultValue={this.props.sunscreenValue}
+                    trackStyle={this.trackStyle}
+                    railStyle={this.railStyle}
+                    handleStyle={this.handleStyle} 
+                    dotStyle={this.dotStyle}
+                    activeDotStyle={this.activeDotStyle}
+                    tipProps={{placement: "right"}}
+                    onChange={this.onSliderChange.bind(this)}
+                  />
+                </div>
+              </div>
+              </CardContent>
+            </Card>
+            <Card raised className={this.props.classes.deviceBox}>
+              <CardContent>
+                Number two
+              </CardContent>
+            </Card>
+            <Card raised className={this.props.classes.deviceBox}>
+              <CardContent>
+              Number three
+              </CardContent>
+            </Card>
+          </SwipeableViews>
         </div>
-        <div id="slider-flex-rows">
-          <div id="slider-wrapper" style={this.sliderStyle}>
-            <TooltipSlider vertical marks={marks} included={true} min={0} max={100}
-              defaultValue={this.props.sunscreenValue}
-              trackStyle={this.trackStyle}
-              railStyle={this.railStyle}
-              handleStyle={this.handleStyle} 
-              dotStyle={this.dotStyle}
-              activeDotStyle={this.activeDotStyle}
-              tipProps={{placement: "right"}}
-              onChange={this.onSliderChange.bind(this)}
-            />
-          </div>
-        </div>
-      </div>
       </div>
     )
   }

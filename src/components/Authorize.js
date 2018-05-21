@@ -136,7 +136,7 @@ class Authorize extends Component {
     }
 
     return ( 
-      <div style={{height: "100vh", backgroundColor: "white"}}>
+      <div style={{height: "100vh", backgroundColor: "white", position: "fixed"}}>
         <SunAppBar title = "SD60 Sunscreen" />
         <div style={{
           display: "flex",

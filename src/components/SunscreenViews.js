@@ -47,7 +47,12 @@ class SunscreenViews extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      sunscreenValue: 0
+      sunscreenValue: 0,
+      sunscreenEntities: [{
+        attributes: {
+          friendly_name: "placehoder"
+        }
+      }]
     }
     this.palette = props.theme.palette
 
@@ -96,7 +101,7 @@ class SunscreenViews extends Component {
   onSliderChange = function(value) {
     console.log(value);
     this.setState({
-      sunscreenValue: value
+      sunscreenValue: value,
     })
   };
 
@@ -112,9 +117,15 @@ class SunscreenViews extends Component {
       }
     })
     .then(res => res.json())
-    .then(data => data.filter(item => item.entity_id.match(/^cover/)))
+    .then(data => data.filter(item => item.entity_id.match(/^cover.*level$/)))
     .then(data => {
-      console.log("got json:", data)
+      console.log("got sunscreens:", data)
+      this.setState({
+        sunscreenEntities: data
+      })
+    })
+    .catch(error => {
+      console.log("got error fetching sunscreens:", error)
     })
   }
 
@@ -131,7 +142,7 @@ class SunscreenViews extends Component {
                 <MoreVertIcon />
               </IconButton>
             }
-            title="Sunscreen Downstairs"
+            title={this.state.sunscreenEntities[0].attributes.friendly_name}
             subheader="September 14, 2016"
           />
               <CardContent>

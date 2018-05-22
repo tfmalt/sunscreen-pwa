@@ -105,7 +105,7 @@ class SunscreenViews extends Component {
     })
   };
 
-  componentDidMount = () => {
+  componentDidMount() {
     this.fetchSunscreenEntities(this.props.auth)
   }
 

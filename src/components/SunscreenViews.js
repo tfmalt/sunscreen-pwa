@@ -132,6 +132,10 @@ class SunscreenViews extends Component {
     })
   }
 
+  handleOnHeaderClick = () => () => {
+    this.fetchSunscreenEntities(this.props.auth)
+  }
+
   render() {
     const { classes } = this.props
 
@@ -141,7 +145,7 @@ class SunscreenViews extends Component {
             <Card raised className={classes.deviceBox}>
             <CardHeader className={classes.cardHeader}
             action={
-              <IconButton>
+              <IconButton onClick={this.handleOnHeaderClick()}>
                 <MoreVertIcon />
               </IconButton>
             }

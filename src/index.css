@@ -5,4 +5,8 @@ body {
   font-family: sans-serif;
   background-color: #c29400;
   position: fixed;
+  background: 
+    radial-gradient(circle, #f9c42d 50%, transparent 50%), 
+    radial-gradient(circle, #f9c42d 33%, transparent 33%) 33px 33px;
+  background-size: 66px 66px;
 }

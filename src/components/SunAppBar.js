@@ -27,6 +27,14 @@ const styles = theme => ({
     justifyContent: "center",
     background: "radial-gradient(circle, " + theme.palette.primary.main + " 50%, transparent 50%), radial-gradient(circle, " + theme.palette.primary.main + " 33%, transparent 33%) 33px 33px",
     backgroundSize: "66px 66px",
+  },
+  iconButton: {
+    position: "relative", 
+    left: "-12px"
+  },
+  appBarTitle: {
+    position: "relative",
+    left: "6px"
   }
 })
 
@@ -68,6 +76,7 @@ class SunAppBar extends Component {
 
   render() {
     const { authorizeOk, url } = this.props.auth
+    const { classes } = this.props
 
     if (this.state.shouldRedirect === true) {
       return (<Redirect to="/auth" />)
@@ -76,10 +85,15 @@ class SunAppBar extends Component {
       <div>
         <AppBar position="fixed">
           <Toolbar>
-            <IconButton onClick={this.toggleDrawer(true)} color="inherit" aria-label="Menu">
+            <IconButton 
+              onClick={this.toggleDrawer(true)} 
+              color="inherit" 
+              aria-label="Menu"
+              className={classes.iconButton}
+            >
               <MenuIcon />
             </IconButton>
-            <Typography variant="title" color="inherit">
+            <Typography className={classes.appBarTitle} variant="title" color="inherit">
                 {this.props.title}
             </Typography>
           </Toolbar>

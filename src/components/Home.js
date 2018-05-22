@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { withTheme } from '@material-ui/core/styles'
 import { Redirect } from 'react-router-dom'
-import SunscreenApp from './SunscreenApp'
+import SunscreenViews from './SunscreenViews'
+import SunAppBar from './SunAppBar'
 
 const storage = window.localStorage;
 
@@ -41,9 +41,12 @@ class Home extends Component {
       return <Redirect to="/auth" />
     }
     return (
-        <SunscreenApp auth={this.state} location={this.props.location}/>
+      <div>
+        <SunAppBar auth={this.state} title="SD60 Sunscreen" location={this.props.location} />
+        <SunscreenViews auth={this.state} location={this.props.location}/>
+      </div>
     );
   }
 }
 
-export default withTheme()(Home);
+export default Home

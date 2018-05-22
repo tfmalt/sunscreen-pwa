@@ -50,12 +50,11 @@ class SunscreenViews extends Component {
       sunscreenValue: 0,
       sunscreenEntities: [{
         attributes: {
-          friendly_name: "placehoder"
+          friendly_name: "placeholder"
         }
       }]
     }
 
-    this.fetchSunscreenEntities(this.props.auth)
     this.palette = props.theme.palette
 
     this.sliderStyle = {
@@ -108,6 +107,7 @@ class SunscreenViews extends Component {
   };
 
   componentDidMount() {
+    this.fetchSunscreenEntities(this.props.auth)
   }
 
   fetchSunscreenEntities = (auth) => {
@@ -121,12 +121,14 @@ class SunscreenViews extends Component {
     .then(data => data.filter(item => item.entity_id.match(/^cover.*level$/)))
     .then(data => {
       console.log("got sunscreens:", data)
+      alert("got sunscreens")
       this.setState({
         sunscreenEntities: data
       })
     })
     .catch(error => {
       console.log("got error fetching sunscreens:", error)
+      alert("got error fetching sunscreens", error)
     })
   }
 

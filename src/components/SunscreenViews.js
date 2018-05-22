@@ -54,6 +54,8 @@ class SunscreenViews extends Component {
         }
       }]
     }
+
+    this.fetchSunscreenEntities(this.props.auth)
     this.palette = props.theme.palette
 
     this.sliderStyle = {
@@ -106,7 +108,6 @@ class SunscreenViews extends Component {
   };
 
   componentDidMount() {
-    this.fetchSunscreenEntities(this.props.auth)
   }
 
   fetchSunscreenEntities = (auth) => {

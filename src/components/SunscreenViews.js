@@ -112,6 +112,7 @@ class SunscreenViews extends Component {
 
   fetchSunscreenEntities = (auth) => {
     console.log("got call to fetch sunscreen:", auth)
+    alert("fetching sunscreens: " + JSON.stringify(auth))
     return fetch(`${auth.url}/api/states`, {
       headers: {
         "x-ha-access": auth.password
@@ -128,7 +129,7 @@ class SunscreenViews extends Component {
     })
     .catch(error => {
       console.log("got error fetching sunscreens:", error)
-      alert("got error fetching sunscreens", error)
+      alert("got error fetching sunscreens:" + error)
     })
   }
 

@@ -10,6 +10,8 @@ class Home extends Component {
     super(props)
 
     console.log("home props location:", props.location)
+    alert("whats location:" + JSON.stringify(props.location))
+
     if (typeof props.location.state !== 'undefined') {
       this.handleLocationState(props.location.state)
       this.state = props.location.state
@@ -24,6 +26,7 @@ class Home extends Component {
     }
 
     console.log("state", this.state);
+    alert("whats state:" + JSON.stringify(this.state))
   }
 
   handleLocationState = params => {

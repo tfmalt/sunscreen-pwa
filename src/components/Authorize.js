@@ -44,7 +44,7 @@ class Authorize extends Component {
     this.classes = props.classes
     this.state = {
       url: "",
-      password: "",
+      apikey: "",
       rememberCredentials: false,
       showPassword: false,
       isPasswordError: false,
@@ -121,10 +121,10 @@ class Authorize extends Component {
     }
 
     const url = `${this.state.url.replace(/\/$/, "")}/api/`
-    console.log("url:", url, "password:", this.state.password)
+    console.log("url:", url, "apikey:", this.state.apikey)
     return fetch(url, {
       headers: {
-        'x-ha-access': this.state.password
+        'x-ha-access': this.state.apikey
       },
     }).then((res) => {
       console.log("Got result", res.status)
@@ -174,8 +174,8 @@ class Authorize extends Component {
             <InputLabel htmlFor="adornment-password">Password</InputLabel>
             <Input id="adornment-password"
               type={this.state.showPassword ? 'text' : 'password'}
-              value={this.state.password}
-              onChange={this.handleChange('password')}
+              value={this.state.apikey}
+              onChange={this.handleChange('apikey')}
               endAdornment={ 
                 <InputAdornment position="end">
                   <IconButton aria-label="Toggle password visibility"

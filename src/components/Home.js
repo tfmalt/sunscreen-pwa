@@ -9,9 +9,6 @@ class Home extends Component {
   constructor(props) {
     super(props)
 
-    console.log("home props location:", props.location)
-    alert("whats location:" + JSON.stringify(props.location))
-
     if (typeof props.location.state !== 'undefined') {
       this.handleLocationState(props.location.state)
       this.state = props.location.state
@@ -24,16 +21,14 @@ class Home extends Component {
         rememberCredentials: storage.getItem('rememberCredentials'),
       }
     }
-
-    console.log("state", this.state);
-    alert("whats state:" + JSON.stringify(this.state))
+    console.log("Home state", this.state);
   }
 
   handleLocationState = params => {
-      console.log("got params:", params)
+      console.log("Home got params:", params)
       if (params.rememberCredentials === true) {
         storage.setItem('rememberCredentials', true)
-        storage.setItem('apikey', params.password)
+        storage.setItem('apikey', params.apikey)
         storage.setItem('url', params.url)
         storage.setItem('authorizeOk', params.authorizeOk)
       }

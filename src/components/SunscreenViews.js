@@ -112,17 +112,15 @@ class SunscreenViews extends Component {
 
   fetchSunscreenEntities = (auth) => {
     console.log("got call to fetch sunscreen:", auth)
-    alert("fetching sunscreens: " + JSON.stringify(auth))
     return fetch(`${auth.url}/api/states`, {
       headers: {
-        "x-ha-access": auth.password
+        "x-ha-access": auth.apikey
       }
     })
     .then(res => res.json())
     .then(data => data.filter(item => item.entity_id.match(/^cover.*level$/)))
     .then(data => {
       console.log("got sunscreens:", data)
-      alert("got sunscreens")
       this.setState({
         sunscreenEntities: data
       })

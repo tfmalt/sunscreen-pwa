@@ -18,53 +18,67 @@ import Checkbox from '@material-ui/core/Checkbox'
 import Typography from '@material-ui/core/Typography'
 import SunAppBar from './SunAppBar'
 import validator from 'validator'
+import LocalCache from '../library/LocalCache'
+import debug from '../library/Debug'
+
+const cache = new LocalCache()
 
 const styles = theme => ({
   button: {},
   textField: {},
-  formPage: {
+  cardWrapper: {
     position: "relative",
-    top: "48px",
+    top: "60px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
+    alignItems: "center",
+    height: "80vh",
+  },
+  formWrapper: {
+    display: "flex",
+    flex: "1 1 auto",
+    flexDirection: "column",
+    justifyContent: "center",
     margin: "12px 8vw",
-    height: "76vh",
+    maxWidth: "480px",
+    minWidth: "280px",
   },
   root: {
     height: "100vh", 
     width: "100vw", 
     backgroundColor: "white", 
   }
-});
+})
 
 class Authorize extends Component {
   constructor(props) {
     super(props)
     this.classes = props.classes
     this.state = {
-      url: "",
-      apikey: "",
-      rememberCredentials: false,
+      credentials: cache.credentials,
+      rememberCredentials: cache.rememberCredentials,
       showPassword: false,
       isPasswordError: false,
       passwordHelperText: "",
       isURLError: false,
       urlHelperText: "",
-      authorizeOk: false
     }
 
-    console.log("classes", props.classes)
+    debug.log(process.env.NODE_ENV, "Authorize state", this.state);
   }
 
   handleChange = name => event => {
+
+    const newCreds = this.state.credentials
+    newCreds[name] = event.target.value
     this.setState({
-      [name]: event.target.value 
+      credentials: newCreds
     })
   }
 
   handleOnBlur = name => event => {
-    console.log("handle blur", name, event.target.value)
+    debug.log("handle blur", name, event.target.value)
     if (name === "url") {
       this.validateURL(event.target.value)
     }
@@ -104,42 +118,55 @@ class Authorize extends Component {
   }
 
   validateURL = url => {
+    if (typeof url !== 'string') {
+      debug.log("credentials url is not a valid string")
+      this.handleIncorrectURL()
+      return false
+    }
+
     if(validator.isURL(url) === true) {
       this.handleCorrectURL()
       return true
     }
     else {
       this.handleIncorrectURL()
+      debug.log("credentials url not a valid url")
       return false
     }
   }
 
-  handleAuthorize = name => event => {
-    console.log("button:", name, this.state)
-    if (this.validateURL(this.state.url) === false) {
+  handleAuthorize = credentials => event => {
+    debug.log("handle Authorize:", credentials)
+    if (this.validateURL(credentials.url) === false) {
       return false
     }
 
-    const url = `${this.state.url.replace(/\/$/, "")}/api/`
-    console.log("url:", url, "apikey:", this.state.apikey)
+    const url = `${credentials.url.replace(/\/$/, "")}/api/`
+    debug.log("Doing fetch", "url:", url, "apikey:", credentials.apikey)
     return fetch(url, {
       headers: {
-        'x-ha-access': this.state.apikey
+        'x-ha-access': credentials.apikey
       },
     }).then((res) => {
-      console.log("Got result", res.status)
       if (res.status === 200) {
-        this.setState({
-          authorizeOk: true
-        })
+        credentials.authorizeOk = true;
+        this.setState({credentials: credentials})
+
+        if (this.state.rememberCredentials) {
+          cache.rememberCredentials = this.state.rememberCredentials
+          cache.credentials = credentials
+        }
+
+        debug.log("Authorize status:", res.status, credentials)
         return
       }
       if (res.status === 401) {
         this.handleIncorrectPassword()
+        credentials.authorizeOk = false
         return
       }
     }).catch(error => {
-      console.log("Got error:", error)
+      debug.log("Got error:", error)
       this.handleCouldNotConnectURL()
     })
   }
@@ -147,14 +174,18 @@ class Authorize extends Component {
   handleSubmit = event => event.preventDefault()
 
   render() {
-    if (this.state.authorizeOk) {
-      return (<Redirect to={{pathname: '/', state: this.state}} />)
+    if (this.state.credentials.authorizeOk) {
+      return (<Redirect to={{
+        pathname: '/', 
+        state: {credentials: this.state.credentials}
+      }} />)
     }
 
     return ( 
       <div className={this.classes.root}>
         <SunAppBar title="SD60 Sunscreen" auth={this.state} location={this.props.location}/>
-        <div className={this.classes.formPage}>
+        <div className={this.classes.cardWrapper}>
+        <div className={this.classes.formWrapper}>
           <Typography variant="subheading" color="inherit">
             Please enter the SD60 URI and password to authorize:
           </Typography> 
@@ -169,12 +200,13 @@ class Authorize extends Component {
             error={this.state.isURLError}
             margin="normal"
             style={{flex: "0 0 auto"}}
+            value={this.state.credentials.url || ""}
           />
           <FormControl style={{flex: "0 0 auto"}} onSubmit={this.handleSubmit}>
             <InputLabel htmlFor="adornment-password">Password</InputLabel>
             <Input id="adornment-password"
               type={this.state.showPassword ? 'text' : 'password'}
-              value={this.state.apikey}
+              value={this.state.credentials.apikey || ""}
               onChange={this.handleChange('apikey')}
               endAdornment={ 
                 <InputAdornment position="end">
@@ -202,10 +234,11 @@ class Authorize extends Component {
           <Button variant="raised"
             className={this.classes.button}
             color="primary"
-            onClick={this.handleAuthorize('authorize')}
+            onClick={this.handleAuthorize(this.state.credentials)}
           >
             Authorize
           </Button>
+        </div>
         </div>
       </div>
     )

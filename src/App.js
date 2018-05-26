@@ -1,19 +1,20 @@
 import React, { Component } from 'react'
 import { BrowserRouter, Route } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { withStyles } from '@material-ui/core/styles'
+import { MuiThemeProvider, createMuiTheme, withStyles } from '@material-ui/core/styles'
+import { amber, teal } from '@material-ui/core/colors'
 import './App.css';
 import Home from './components/Home'
 import Authorize from './components/Authorize'
 
 const sunTheme = createMuiTheme({
   palette: {
+    type: "light",
     primary: {
-      light: '#fff763',
-      main: '#f9c42d',
-      dark: '#c29400',
-      contrastText: '#000',
+      main: amber[700],
+    }, 
+    secondary: {
+      main: teal[700],
     }
   }
 });

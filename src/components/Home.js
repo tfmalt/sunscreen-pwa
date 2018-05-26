@@ -2,46 +2,37 @@ import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom'
 import SunscreenViews from './SunscreenViews'
 import SunAppBar from './SunAppBar'
+import LocalCache from '../library/LocalCache'
+import debug from '../library/Debug'
 
-const storage = window.localStorage;
+const cache = new LocalCache()
 
 class Home extends Component {
   constructor(props) {
     super(props)
-
-    if (typeof props.location.state !== 'undefined') {
-      this.handleLocationState(props.location.state)
-      this.state = props.location.state
+    this.state = {
+      credentials: cache.credentials,
+      rememberCredentials: cache.rememberCredentials
     }
-    else {
-      this.state = {
-        apikey: storage.getItem("apikey"),
-        url: storage.getItem('url'),
-        authorizeOk: storage.getItem('authorizeOk'),
-        rememberCredentials: storage.getItem('rememberCredentials'),
+
+    if (typeof this.props.location.state === 'object') {
+      if (typeof this.props.location.state.credentials === 'object') {
+        this.state.credentials = this.props.location.state.credentials
       }
     }
-    console.log("Home state", this.state);
-  }
-
-  handleLocationState = params => {
-      console.log("Home got params:", params)
-      if (params.rememberCredentials === true) {
-        storage.setItem('rememberCredentials', true)
-        storage.setItem('apikey', params.apikey)
-        storage.setItem('url', params.url)
-        storage.setItem('authorizeOk', params.authorizeOk)
-      }
+    
+    debug.log("Home state and props:", this.state, this.props);
   }
 
   render() {
-    if (this.state.apikey === null) {
+    if (typeof this.state.credentials.apikey !== 'string') {
+      debug.log("Home: Did not find apikey redirecting", this.state)
       return <Redirect to="/auth" />
     }
     return (
       <div>
-        <SunAppBar auth={this.state} title="SD60 Sunscreen" location={this.props.location} />
-        <SunscreenViews auth={this.state} location={this.props.location}/>
+        <SunAppBar auth={this.state.credentials} title="SD60 Sunscreen" location={this.props.location} />
+        <SunscreenViews auth={this.state.credentials} location={this.props.location}/>
       </div>
     );
   }

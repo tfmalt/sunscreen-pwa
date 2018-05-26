@@ -16,18 +16,35 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 import Snackbar from '@material-ui/core/Snackbar'
 import { Offline } from 'react-detect-offline'
 import MenuIcon from '@material-ui/icons/Menu'
+import debug from '../library/Debug'
+import LocalCache from '../library/LocalCache'
+
+const cache = new LocalCache()
 
 const styles = theme => ({
   drawerHeader: {
-    height: "60px",
+    height: "34px",
     padding: "12px",
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: theme.palette.secondary.dark,
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    background: "radial-gradient(circle, " + theme.palette.primary.main + " 50%, transparent 50%), radial-gradient(circle, " + theme.palette.primary.main + " 33%, transparent 33%) 33px 33px",
-    backgroundSize: "66px 66px",
+    background: `radial-gradient(
+                   circle, ${theme.palette.secondary.main} 50%, transparent 50%
+                 ), 
+                 radial-gradient(
+                   circle, ${theme.palette.secondary.main} 33%, transparent 33%
+                 ) 30px 30px`,
+    backgroundSize: "60px 60px",
   },
+  drawerTitle: {
+    color: theme.palette.secondary.contrastText
+  }, 
+
+  menuBox: {
+    width: "300px"
+  },
+
   iconButton: {
     position: "relative", 
     left: "-12px"
@@ -45,25 +62,29 @@ class SunAppBar extends Component {
     this.state = {
       networkInfoOpen: true,
       openDrawer: false,
-      shouldRedirect: false
+      shouldRedirect: false,
+      credentials: cache.credentials,
+      rememberCredentials: cache.rememberCredentials
     }
-
-    console.log("sunbarapp props:", props)
+    
+    if (this.props.location.state && typeof this.props.location.state.credentials === 'object') {
+      this.state.credentials = this.props.location.state.credentials
+    }
+    
+    debug.log("sunbarapp state:", this.state)
   }
 
   toggleDrawer = (status) => () => {
-    console.log("toggle drawer", status)
+    debug.log("toggle drawer", status)
     this.setState({
       openDrawer: status
     })
   }
 
   handleLogout = (props) => () => {
-    console.log("got handle logout:", props)
-    const storage = window.localStorage;
-    storage.removeItem('apikey')
-    storage.setItem('authorizeOk', false)
-    storage.setItem('rememberCredentials', false)
+    debug.log("got handle logout:", props)
+    cache.delete('apikey')
+    cache.rememberCredentials = false
 
     this.setState({
       shouldRedirect: this.props.location.pathname === '/auth' ? false : true,
@@ -71,16 +92,17 @@ class SunAppBar extends Component {
   }
 
   handleConfiguration = () => () => {
-    console.log("got handle configuration")
+    debug.log("got handle configuration")
   }
 
   render() {
-    const { authorizeOk, url } = this.props.auth
-    const { classes } = this.props
+    const { url, apikey } = this.state.credentials
+    const classes = this.classes
 
     if (this.state.shouldRedirect === true) {
       return (<Redirect to="/auth" />)
     }
+
     return (
       <div>
         <AppBar position="fixed">
@@ -99,7 +121,7 @@ class SunAppBar extends Component {
           </Toolbar>
         </AppBar>
         <SwipeableDrawer 
-          anchor="left" 
+          anchor="left"
           open={this.state.openDrawer} 
           onClose={this.toggleDrawer(false)}
           onOpen={this.toggleDrawer(true)}
@@ -108,17 +130,11 @@ class SunAppBar extends Component {
             onClick={this.toggleDrawer(false)}
             onKeyDown={this.toggleDrawer(false)}
           >
-            <Typography variant="title" style={{
-              color: "white", fontWeight: "bold", textShadow: "0px 3px 10px rgba(0,0,0, 0.5)"
-            }}>
+            <Typography variant="title" className={this.classes.drawerTitle}>
               Configuration Menu
             </Typography>
           </div>
-          <div
-            style={{
-              width: "300px",
-            }}
-          >
+          <div className={this.classes.menuBox}>
             <List component="nav">
               <ListItem button onClick={this.handleConfiguration()}>
                 <ListItemIcon>
@@ -131,7 +147,7 @@ class SunAppBar extends Component {
                   <ExitToAppIcon />
                 </ListItemIcon>
                 <ListItemText primary="Log out" secondary={
-                  authorizeOk ? `From ${url}`: "Not Authenticated"
+                  apikey ? `From ${url}`: "Not Authenticated"
                 } />
               </ListItem>
             </List>

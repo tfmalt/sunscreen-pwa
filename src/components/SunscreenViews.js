@@ -6,10 +6,13 @@ import CardContent from '@material-ui/core/CardContent'
 import CardHeader from '@material-ui/core/CardHeader'
 import IconButton from '@material-ui/core/IconButton'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
-import grey from '@material-ui/core/colors/grey';
+import grey from '@material-ui/core/colors/grey'
 import Slider from 'rc-slider'
 import SwipeableViews from 'react-swipeable-views'
+import LocalCache from '../library/LocalCache'
+import debug from '../library/Debug'
 
+const cache = new LocalCache()
 const TooltipSlider = Slider.createSliderWithTooltip(Slider);
 
 const styles = theme => ({
@@ -32,6 +35,14 @@ const styles = theme => ({
   cardHeader: {
     backgroundColor: theme.palette.primary.light,
     width: "80vw"
+  },
+
+  sliderFlexRows: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    marginTop: "3vh"
   }
 });
 
@@ -48,11 +59,12 @@ class SunscreenViews extends Component {
     super(props)
     this.state = {
       sunscreenValue: 0,
-      sunscreenEntities: [{
+      sunscreenEntities: cache.sunscreenEntities || [{
         attributes: {
           friendly_name: "placeholder"
         }
-      }]
+      }],
+      credentials: this.props.auth
     }
 
     this.palette = props.theme.palette
@@ -95,23 +107,20 @@ class SunscreenViews extends Component {
         borderColor: this.palette.primary.main,
         backgroundColor: this.palette.primary.main
     }
-
-    console.log(props)
   };
 
   onSliderChange = function(value) {
-    console.log(value);
     this.setState({
       sunscreenValue: value,
     })
   };
 
   componentDidMount() {
-    this.fetchSunscreenEntities(this.props.auth)
+    this.fetchSunscreenEntities(this.state.credentials)
   }
 
   fetchSunscreenEntities = (auth) => {
-    console.log("got call to fetch sunscreen:", auth)
+    debug.log("got call to fetch sunscreen:", auth)
     return fetch(`${auth.url}/api/states`, {
       headers: {
         "x-ha-access": auth.apikey
@@ -120,10 +129,11 @@ class SunscreenViews extends Component {
     .then(res => res.json())
     .then(data => data.filter(item => item.entity_id.match(/^cover.*level$/)))
     .then(data => {
-      console.log("got sunscreens:", data)
+      debug.log("got sunscreens:", data)
       this.setState({
         sunscreenEntities: data
       })
+      cache.sunscreenEntities = data
     })
     .catch(error => {
       console.log("got error fetching sunscreens:", error)
@@ -137,25 +147,29 @@ class SunscreenViews extends Component {
 
   render() {
     const { classes } = this.props
+    const screens = this.state.sunscreenEntities
 
     return (
         <div id="containment-unit" className={classes.containmentUnit}>
           <SwipeableViews>
-            <Card raised className={classes.deviceBox}>
-            <CardHeader className={classes.cardHeader}
-            action={
-              <IconButton onClick={this.handleOnHeaderClick()}>
-                <MoreVertIcon />
-              </IconButton>
-            }
-            title={this.state.sunscreenEntities[0].attributes.friendly_name}
-            subheader="September 14, 2016"
-          />
-              <CardContent>
-              <div style={{
-                height: "10vh",
-                textAlign: "center",
-              }}>
+            {screens.map( item => {
+              item.key = item.entity_id
+              return (
+                <Card raised className={classes.deviceBox} key={item.key}>
+                  <CardHeader className={classes.cardHeader}
+                    action={
+                      <IconButton onClick={this.handleOnHeaderClick()}>
+                        <MoreVertIcon />
+                      </IconButton>
+                    }
+                    title={item.attributes.friendly_name}
+                    subheader={(new Date(item.last_updated).toDateString())}
+                  />
+                  <CardContent>
+                    <div style={{
+                      height: "10vh",
+                      textAlign: "center",
+                    }}>
                 <span style={{
                   display: "block",
                   fontSize: "8vh",
@@ -164,8 +178,8 @@ class SunscreenViews extends Component {
                   {this.state.sunscreenValue}
                 </span>
               </div>
-              <div id="slider-flex-rows">
-                <div id="slider-wrapper" style={this.sliderStyle}>
+              <div className={classes.sliderFlexRows}>
+                <div style={this.sliderStyle}>
                   <TooltipSlider vertical marks={marks} included={true} min={0} max={100}
                     defaultValue={this.props.sunscreenValue}
                     trackStyle={this.trackStyle}
@@ -180,16 +194,8 @@ class SunscreenViews extends Component {
               </div>
               </CardContent>
             </Card>
-            <Card raised className={this.props.classes.deviceBox}>
-              <CardContent>
-                Number two
-              </CardContent>
-            </Card>
-            <Card raised className={this.props.classes.deviceBox}>
-              <CardContent>
-              Number three
-              </CardContent>
-            </Card>
+              )
+            })}
           </SwipeableViews>
         </div>
     )

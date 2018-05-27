@@ -6,7 +6,8 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-  /* background-color: #c29400; */
-  background-color: #f9c42d;
+  /* background-color: #c29400;
+  background-color: #f9c42d; */
+  background-color: rgb(178, 112, 0);
   position: fixed;
 }

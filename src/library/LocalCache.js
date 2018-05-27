@@ -28,7 +28,7 @@ class LocalCache {
   }
 
   set sunscreenEntities(value) {
-    storage.setItem('sunscreenEntitites', JSON.stringify(value))
+    storage.setItem('sunscreenEntities', JSON.stringify(value))
   }
   
   get hasAuthorizedOk() { return JSON.parse(storage.getItem('authorizedOk')) || false }

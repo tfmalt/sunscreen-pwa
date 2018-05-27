@@ -6,6 +6,7 @@ import { amber, teal } from '@material-ui/core/colors'
 import './App.css';
 import Home from './components/Home'
 import Authorize from './components/Authorize'
+import debug from './library/Debug'
 
 const sunTheme = createMuiTheme({
   palette: {
@@ -18,6 +19,9 @@ const sunTheme = createMuiTheme({
     }
   }
 });
+
+debug.log("dark color:", sunTheme.palette.primary.dark)
+debug.log("Theme:", sunTheme)
 
 const styles = sunTheme => ({});
 
